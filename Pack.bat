@@ -1,3 +1,3 @@
-cd src\System.Nxlx.Observer\
-dotnet pack .\System.Nxlx.Observer.csproj --configuration Release --output ..\..\nupkg
+cd src\System.Nxl.Observer\
+dotnet pack .\System.Nxl.Observer.csproj --configuration Release --output ..\..\nupkg
 cd ..\..\
