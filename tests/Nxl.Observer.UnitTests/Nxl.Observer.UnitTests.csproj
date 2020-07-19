@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\System.Nxl.Observer\System.Nxl.Observer.csproj" />
+    <ProjectReference Include="..\..\src\Nxl.Observer\Nxl.Observer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace System.Nxl.Observer.UnitTests
+namespace Nxl.Observer.UnitTests
 {
     public class ObserverBuilderTests
     {

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace System.Nxl.Observer
+namespace Nxl.Observer
 {
     /// <summary>
     /// Options to configure the instance of <see cref="IEventBroker"/>.

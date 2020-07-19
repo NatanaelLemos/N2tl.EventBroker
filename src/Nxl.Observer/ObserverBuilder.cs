@@ -1,4 +1,6 @@
-﻿namespace System.Nxl.Observer
+﻿using System;
+
+namespace Nxl.Observer
 {
     /// <summary>
     /// Builder for <see cref="IEventBroker"/>.

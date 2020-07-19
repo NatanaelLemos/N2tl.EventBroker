@@ -1,6 +1,9 @@
-# System.Nxl.Observer
+# Nxl.Observer
 
 Implementation of the Observer pattern in the form of an EventBroker.
+
+You can find this project published at
+https://www.nuget.org/packages/Nxl.Observer/
 
 ## Usage
 

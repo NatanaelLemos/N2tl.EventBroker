@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
-namespace System.Nxl.Observer
+namespace Nxl.Observer
 {
     /// <summary>
     /// Interface for subscribing and notifying events into the Observer.
