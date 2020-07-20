@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Nxl.Observer
+namespace N2tl.Observer
 {
     /// <summary>
     /// An internal implementation of <see cref="IEventBroker"/>.
@@ -12,7 +12,7 @@ namespace Nxl.Observer
     internal class EventBroker : IEventBroker
     {
         private readonly ConcurrentDictionary<string, List<object>> _subscriptions;
-        private readonly List<Func<Type, Task<bool>>> _interrupters;
+        private readonly List<object> _interrupters;
 
         /// <summary>
         /// Creates an instance of <see cref="EventBroker"/>.
@@ -20,12 +20,12 @@ namespace Nxl.Observer
         /// <param name="interrupters">
         ///     List of functions that can interrupt the execution of an event.
         /// </param>
-        public EventBroker(params Func<Type, Task<bool>>[] interrupters)
+        public EventBroker(params object[] interrupters)
         {
             _subscriptions = new ConcurrentDictionary<string, List<object>>();
             _interrupters = interrupters == null
-                ? new List<Func<Type, Task<bool>>>()
-                : new List<Func<Type, Task<bool>>>(interrupters);
+                ? new List<object>()
+                : interrupters.ToList();
         }
 
         /// <inheritdoc />
@@ -64,13 +64,9 @@ namespace Nxl.Observer
                 return;
             }
 
-            foreach (var interrupter in _interrupters)
+            if(await CommandWasInterrupted(command))
             {
-                var isAllowed = await interrupter(typeof(TEvent));
-                if (!isAllowed)
-                {
-                    return;
-                }
+                return;
             }
 
             var callbackResponses = listOfCallbacks.Select(c =>
@@ -80,6 +76,25 @@ namespace Nxl.Observer
             });
 
             await Task.WhenAll(callbackResponses);
+        }
+
+        private async Task<bool> CommandWasInterrupted<TEvent>(TEvent command)
+        {
+            var interrupters = _interrupters
+                   .Where(i => i is Func<TEvent, Task<bool>>)
+                   .Select(i => i as Func<TEvent, Task<bool>>)
+                   .ToList();
+
+            foreach (var interrupter in interrupters)
+            {
+                var isAllowed = await interrupter(command);
+                if (!isAllowed)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <inheritdoc />

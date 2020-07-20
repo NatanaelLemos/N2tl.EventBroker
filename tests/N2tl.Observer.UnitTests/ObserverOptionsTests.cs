@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Xunit;
 
-namespace Nxl.Observer.UnitTests
+namespace N2tl.Observer.UnitTests
 {
     public class ObserverOptionsTests
     {
@@ -10,7 +10,7 @@ namespace Nxl.Observer.UnitTests
         public void AddInterrupterShouldAddInterrupters()
         {
             var options = new ObserverOptions();
-            options.AddInterrupter(t => Task.FromResult(true));
+            options.AddInterrupter<ObserverBuilderTests>(t => Task.FromResult(true));
             options.Interrupters.Should().HaveCount(1);
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nxl.Observer
+namespace N2tl.Observer
 {
     /// <summary>
     /// Builder for <see cref="IEventBroker"/>.

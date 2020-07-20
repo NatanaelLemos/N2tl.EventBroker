@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{245653D7-17D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4FEE95A7-10AD-41A4-ABBB-E3D95B5F31E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nxl.Observer", "src\Nxl.Observer\Nxl.Observer.csproj", "{9FAD973B-B523-4A5D-8515-369BE47D1DAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "N2tl.Observer", "src\N2tl.Observer\N2tl.Observer.csproj", "{9FAD973B-B523-4A5D-8515-369BE47D1DAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nxl.Observer.UnitTests", "tests\Nxl.Observer.UnitTests\Nxl.Observer.UnitTests.csproj", "{9C9E6BE8-AFC7-49B0-B8AF-33E7495B4837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "N2tl.Observer.UnitTests", "tests\N2tl.Observer.UnitTests\N2tl.Observer.UnitTests.csproj", "{9C9E6BE8-AFC7-49B0-B8AF-33E7495B4837}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{605AA902-ED54-43AA-AE5B-B8927439E178}"
 	ProjectSection(SolutionItems) = preProject

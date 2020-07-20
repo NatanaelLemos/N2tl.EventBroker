@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Nxl.Observer
+namespace N2tl.Observer
 {
     /// <summary>
     /// <see cref="IServiceCollection"/> extensions to inject an <see cref="IEventBroker"/>.

@@ -1,25 +1,41 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 
-namespace Nxl.Observer.UnitTests
+namespace N2tl.Observer.UnitTests
 {
     public class EventBrokerTests
     {
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void ConstructorShouldNotThrow(bool shouldMockAuthFactory)
+        [InlineData("nothing")]
+        [InlineData("null")]
+        [InlineData("wrongfunc")]
+        [InlineData("func")]
+        public void ConstructorShouldNotThrow(string mockType)
         {
-            if (shouldMockAuthFactory)
+            switch (mockType)
             {
-                this.Invoking(_ => new EventBroker(t => Task.FromResult(true)))
-                    .Should().NotThrow();
-            }
-            else
-            {
-                this.Invoking(_ => new EventBroker(null))
-                    .Should().NotThrow();
+                case "nothing":
+                    this.Invoking(_ => new EventBroker())
+                        .Should().NotThrow();
+                    break;
+                case "null":
+                    this.Invoking(_ => new EventBroker(null))
+                        .Should().NotThrow();
+                    break;
+                case "wrongfunc":
+                    object wrongFuncType = new object();
+                    this.Invoking(_ => new EventBroker(wrongFuncType))
+                        .Should().NotThrow();
+                    break;
+                case "func":
+                    Func<EventBrokerTests, Task<bool>> function = t => Task.FromResult(true);
+                    this.Invoking(_ => new EventBroker(function))
+                        .Should().NotThrow();
+                    break;
+                default:
+                    throw new Exception("Invalid test type");
             }
         }
 
@@ -70,7 +86,8 @@ namespace Nxl.Observer.UnitTests
         [Fact]
         public async Task NotifyShouldNotNotifySubscribersIfNotAuthenticated()
         {
-            using var eventBroker = new EventBroker(u => Task.FromResult(false));
+            Func<object, Task<bool>> func = u => Task.FromResult(false);
+            using var eventBroker = new EventBroker(func);
 
             var wasCalled = false;
             eventBroker.Subscribe<object>(o =>
@@ -87,7 +104,8 @@ namespace Nxl.Observer.UnitTests
         [Fact]
         public async Task NotifyShouldNotifySubscribersIfIsAuthenticated()
         {
-            using var eventBroker = new EventBroker(u => Task.FromResult(true));
+            Func<object, Task<bool>> func = u => Task.FromResult(true);
+            using var eventBroker = new EventBroker(func);
 
             var wasCalled = false;
             eventBroker.Subscribe<object>(o =>

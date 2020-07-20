@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Nxl.Observer.UnitTests
+namespace N2tl.Observer.UnitTests
 {
     public class ObserverExtensionsTests
     {

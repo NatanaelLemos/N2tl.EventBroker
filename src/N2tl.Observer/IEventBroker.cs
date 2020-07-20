@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Nxl.Observer
+namespace N2tl.Observer
 {
     /// <summary>
     /// Interface for subscribing and notifying events into the Observer.

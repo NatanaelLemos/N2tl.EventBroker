@@ -1,9 +1,9 @@
-# Nxl.Observer
+# N2tl.Observer
 
 Implementation of the Observer pattern in the form of an EventBroker.
 
 You can find this project published at
-https://www.nuget.org/packages/Nxl.Observer/
+https://www.nuget.org/packages/N2tl.Observer/
 
 ## Usage
 
@@ -34,14 +34,14 @@ Once interrupters are added to the pipeline, events will only go through if the 
 ``` C#
         public void ConfigureServices(IServiceCollection services)
         {
-            Func<Type, Task<bool>> interrupter = t => Task.FromResult(true);
+            Func<MyEventType, Task<bool>> interrupter = t => Task.FromResult(true);
 
             services.AddObserver(opt => opt.AddInterrupter(interrupter));
         }
 
         or
 
-        Func<Type, Task<bool>> interrupter = t => Task.FromResult(true);
+        Func<MyEventType, Task<bool>> interrupter = t => Task.FromResult(true);
         ObserverBuilder.Build(opt => opt.AddInterrupter(interrupter));
 ```
 
