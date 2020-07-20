@@ -80,12 +80,26 @@ namespace N2tl.Observer
 
         private async Task<bool> CommandWasInterrupted<TEvent>(TEvent command)
         {
-            var interrupters = _interrupters
+            var typeSpecificInterrupters = _interrupters
                    .Where(i => i is Func<TEvent, Task<bool>>)
                    .Select(i => i as Func<TEvent, Task<bool>>)
                    .ToList();
 
-            foreach (var interrupter in interrupters)
+            foreach (var interrupter in typeSpecificInterrupters)
+            {
+                var isAllowed = await interrupter(command);
+                if (!isAllowed)
+                {
+                    return true;
+                }
+            }
+
+            var generalInterrupters = _interrupters
+                .Where(i => i is Func<object, Task<bool>>)
+                .Select(i => i as Func<object, Task<bool>>)
+                .ToList();
+
+            foreach(var interrupter in generalInterrupters)
             {
                 var isAllowed = await interrupter(command);
                 if (!isAllowed)

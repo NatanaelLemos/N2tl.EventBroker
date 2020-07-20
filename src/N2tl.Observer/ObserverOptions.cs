@@ -20,7 +20,13 @@ namespace N2tl.Observer
         /// <param name="interrupter">An interrupter function.</param>
         /// <typeparam name="TEvent">The event type to be checked against.</typeparam>
         /// <returns>Options instance with the interrupter injected.</returns>
-        public ObserverOptions AddInterrupter<TEvent>(Func<TEvent, Task<bool>> interrupter)
+        public ObserverOptions AddEventInterrupter<TEvent>(Func<TEvent, Task<bool>> interrupter)
+        {
+            _interrupters.Add(interrupter);
+            return this;
+        }
+
+        public ObserverOptions AddGeneralInterrupter(Func<object, Task<bool>> interrupter)
         {
             _interrupters.Add(interrupter);
             return this;

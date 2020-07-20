@@ -29,20 +29,36 @@ Optionally, the ObserverBuilder can be configured with interrupters.
 
 Once interrupters are added to the pipeline, events will only go through if the condition in any interrupter returns true.
 
-### ObserverBuilder
+### ObserverBuilder with event specific interrupters.
 
 ``` C#
         public void ConfigureServices(IServiceCollection services)
         {
             Func<MyEventType, Task<bool>> interrupter = t => Task.FromResult(true);
 
-            services.AddObserver(opt => opt.AddInterrupter(interrupter));
+            services.AddObserver(opt => opt.AddEventInterrupter(interrupter));
         }
 
         or
 
         Func<MyEventType, Task<bool>> interrupter = t => Task.FromResult(true);
-        ObserverBuilder.Build(opt => opt.AddInterrupter(interrupter));
+        ObserverBuilder.Build(opt => opt.AddEventInterrupter(interrupter));
+```
+
+### ObserverBuilder with general interrupters.
+
+``` C#
+        public void ConfigureServices(IServiceCollection services)
+        {
+            Func<object, Task<bool>> interrupter = t => Task.FromResult(true);
+
+            services.AddObserver(opt => opt.AddGeneralInterrupter(interrupter));
+        }
+
+        or
+
+        Func<object, Task<bool>> interrupter = t => Task.FromResult(true);
+        ObserverBuilder.Build(opt => opt.AddGeneralInterrupter(interrupter));
 ```
 
 ---
