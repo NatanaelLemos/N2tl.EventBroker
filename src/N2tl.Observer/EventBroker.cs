@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace N2tl.Observer
     /// </summary>
     internal class EventBroker : IEventBroker
     {
-        private readonly ConcurrentDictionary<string, List<object>> _subscriptions;
+        private readonly Dictionary<string, IDisposable> _subscriptions;
         private readonly List<object> _interrupters;
 
         /// <summary>
@@ -20,9 +19,9 @@ namespace N2tl.Observer
         /// <param name="interrupters">
         ///     List of functions that can interrupt the execution of an event.
         /// </param>
-        public EventBroker(params object[] interrupters)
+        internal EventBroker(params object[] interrupters)
         {
-            _subscriptions = new ConcurrentDictionary<string, List<object>>();
+            _subscriptions = new Dictionary<string, IDisposable>();
             _interrupters = interrupters == null
                 ? new List<object>()
                 : interrupters.ToList();
@@ -36,18 +35,20 @@ namespace N2tl.Observer
                 return;
             }
 
-            var key = GetKey<TEvent>();
-            if (_subscriptions.TryGetValue(key, out var listOfCallbacks))
+            var eventNotification = GetEventNotification<TEvent>();
+            eventNotification.Subscribe(callback);
+        }
+
+        /// <inheritdoc />
+        public void Unsubscribe<TEvent>(Func<TEvent, Task> callback)
+        {
+            if(callback == null)
             {
-                listOfCallbacks.Add(callback);
+                return;
             }
-            else
-            {
-                _subscriptions.TryAdd(key, new List<object>
-                {
-                    callback
-                });
-            }
+
+            var eventNotification = GetEventNotification<TEvent>();
+            eventNotification.Unsubscribe(callback);
         }
 
         /// <inheritdoc />
@@ -58,27 +59,50 @@ namespace N2tl.Observer
                 return;
             }
 
-            var key = GetKey<TEvent>();
-            if (!_subscriptions.TryGetValue(key, out var listOfCallbacks))
+            if (await CommandWasInterrupted(command))
             {
                 return;
             }
 
-            if(await CommandWasInterrupted(command))
+            var eventNotification = GetEventNotification<TEvent>();
+            await eventNotification.Notify(command);
+        }
+
+        private EventBrokerNotification<TEvent> GetEventNotification<TEvent>()
+        {
+            var key = typeof(TEvent).FullName;
+            EventBrokerNotification<TEvent> eventNotification = null;
+
+            if (_subscriptions.ContainsKey(key))
             {
-                return;
+                eventNotification = _subscriptions[key] as EventBrokerNotification<TEvent>;
             }
 
-            var callbackResponses = listOfCallbacks.Select(c =>
+            if (eventNotification == null)
             {
-                var func = (Func<TEvent, Task>)c;
-                return func(command);
-            });
+                eventNotification = new EventBrokerNotification<TEvent>();
+                _subscriptions[key] = eventNotification;
+            }
 
-            await Task.WhenAll(callbackResponses);
+            return eventNotification;
         }
 
         private async Task<bool> CommandWasInterrupted<TEvent>(TEvent command)
+        {
+            if(await CommandWasInterruptedByTypeSpecificInterrupter(command))
+            {
+                return true;
+            }
+
+            if(await CommandWasInterruptedByGeneralInterrupter(command))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task<bool> CommandWasInterruptedByTypeSpecificInterrupter<TEvent>(TEvent command)
         {
             var typeSpecificInterrupters = _interrupters
                    .Where(i => i is Func<TEvent, Task<bool>>)
@@ -94,12 +118,17 @@ namespace N2tl.Observer
                 }
             }
 
+            return false;
+        }
+
+        private async Task<bool>CommandWasInterruptedByGeneralInterrupter<TEvent>(TEvent command)
+        {
             var generalInterrupters = _interrupters
                 .Where(i => i is Func<object, Task<bool>>)
                 .Select(i => i as Func<object, Task<bool>>)
                 .ToList();
 
-            foreach(var interrupter in generalInterrupters)
+            foreach (var interrupter in generalInterrupters)
             {
                 var isAllowed = await interrupter(command);
                 if (!isAllowed)
@@ -114,13 +143,13 @@ namespace N2tl.Observer
         /// <inheritdoc />
         public void Dispose()
         {
+            foreach (var subscription in _subscriptions.Values)
+            {
+                subscription.Dispose();
+            }
+
             _subscriptions.Clear();
             _interrupters.Clear();
-        }
-
-        private string GetKey<TEvent>()
-        {
-            return typeof(TEvent).FullName;
         }
     }
 }

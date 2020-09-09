@@ -19,6 +19,13 @@ namespace N2tl.Observer
         void Subscribe<TEvent>(Func<TEvent, Task> callback);
 
         /// <summary>
+        /// Unsubscribe from an event <typeparamref name="TEvent"/>.
+        /// </summary>
+        /// <typeparam name="TEvent">Type of event to be unsubscribed from.</typeparam>
+        /// <param name="callback">Function that will be unsubscribed.</param>
+        void Unsubscribe<TEvent>(Func<TEvent, Task> callback);
+
+        /// <summary>
         /// Notifies that <typeparamref name="TEvent"/> happened.
         /// </summary>
         /// <typeparam name="TEvent">Event type to be notified.</typeparam>
