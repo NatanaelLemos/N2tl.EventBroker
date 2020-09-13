@@ -5,19 +5,19 @@ using Xunit;
 
 namespace N2tl.Observer.UnitTests
 {
-    public class SubscribeUnsubscribeTests
+    public class SubscribeUnsubscribeCommandsTests
     {
         private List<string> _result = new List<string>();
 
         [Fact]
-        public async Task NotifyShouldStopAfterUnsubscription()
+        public async Task CommandShouldStopAfterUnsubscription()
         {
             var eventBroker = new EventBroker();
             eventBroker.Subscribe<SubscribeUnsubscribeTestsEvent>(Test1);
             eventBroker.Subscribe<SubscribeUnsubscribeTestsEvent>(Test2);
             eventBroker.Subscribe<SubscribeUnsubscribeTestsEvent>(Test3);
 
-            await eventBroker.Notify(new SubscribeUnsubscribeTestsEvent());
+            await eventBroker.Command(new SubscribeUnsubscribeTestsEvent());
             _result.Should().BeEquivalentTo(new List<string>
             {
                 "1", "2", "3"
@@ -25,7 +25,7 @@ namespace N2tl.Observer.UnitTests
 
             eventBroker.Unsubscribe<SubscribeUnsubscribeTestsEvent>(Test2);
 
-            await eventBroker.Notify(new SubscribeUnsubscribeTestsEvent());
+            await eventBroker.Command(new SubscribeUnsubscribeTestsEvent());
             _result.Should().BeEquivalentTo(new List<string>
             {
                 "1", "2", "3", "1", "3"

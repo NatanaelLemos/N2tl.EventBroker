@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "N2tl.Observer.IntegrationTests", "tests\N2tl.Observer.IntegrationTests\N2tl.Observer.IntegrationTests.csproj", "{462E2428-1570-412E-9150-6815E26523CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{9C9E6BE8-AFC7-49B0-B8AF-33E7495B4837}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C9E6BE8-AFC7-49B0-B8AF-33E7495B4837}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C9E6BE8-AFC7-49B0-B8AF-33E7495B4837}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462E2428-1570-412E-9150-6815E26523CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462E2428-1570-412E-9150-6815E26523CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462E2428-1570-412E-9150-6815E26523CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462E2428-1570-412E-9150-6815E26523CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9FAD973B-B523-4A5D-8515-369BE47D1DAD} = {245653D7-17DC-45A8-9392-20544B785539}
 		{9C9E6BE8-AFC7-49B0-B8AF-33E7495B4837} = {4FEE95A7-10AD-41A4-ABBB-E3D95B5F31E8}
+		{462E2428-1570-412E-9150-6815E26523CB} = {4FEE95A7-10AD-41A4-ABBB-E3D95B5F31E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {978B2E67-4CB6-40E8-8B48-9C1BAE27B972}

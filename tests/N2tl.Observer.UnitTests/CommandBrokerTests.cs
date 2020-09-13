@@ -5,7 +5,7 @@ using Xunit;
 
 namespace N2tl.Observer.UnitTests
 {
-    public class EventBrokerTests
+    public class CommandBrokerTests
     {
         [Theory]
         [InlineData("nothing")]
@@ -30,7 +30,7 @@ namespace N2tl.Observer.UnitTests
                         .Should().NotThrow();
                     break;
                 case "func":
-                    Func<EventBrokerTests, Task<bool>> function = t => Task.FromResult(true);
+                    Func<CommandBrokerTests, Task<bool>> function = t => Task.FromResult(true);
                     this.Invoking(_ => new EventBroker(function))
                         .Should().NotThrow();
                     break;
@@ -48,106 +48,106 @@ namespace N2tl.Observer.UnitTests
 
             if (shouldMockCallback)
             {
-                eventBroker.Invoking(b => b.Subscribe<EventBrokerTests>(c => Task.CompletedTask))
+                eventBroker.Invoking(b => b.Subscribe<CommandBrokerTests>(c => Task.CompletedTask))
                     .Should().NotThrow();
             }
             else
             {
-                eventBroker.Invoking(b => b.Subscribe<EventBrokerTests>(null))
+                eventBroker.Invoking(b => b.Subscribe<CommandBrokerTests>(null))
                     .Should().NotThrow();
             }
         }
 
         [Fact]
-        public void NotifyShouldNotThrowIfTheresNoSubscription()
+        public void CommandShouldNotThrowIfTheresNoSubscription()
         {
             using var eventBroker = new EventBroker(null);
-            eventBroker.Awaiting(e => e.Notify(new EventBrokerTests()))
+            eventBroker.Awaiting(e => e.Command(new CommandBrokerTests()))
                 .Should().NotThrow();
         }
 
         [Fact]
-        public async Task NotifyShouldNotifySubscribersIfTheresNoAuthenticationFactory()
+        public async Task CommandShouldNotifySubscribersIfTheresNoAuthenticationFactory()
         {
             using var eventBroker = new EventBroker(null);
 
             var wasCalled = false;
-            eventBroker.Subscribe<EventBrokerTests>(o =>
+            eventBroker.Subscribe<CommandBrokerTests>(o =>
             {
                 wasCalled = true;
                 return Task.CompletedTask;
             });
 
-            await eventBroker.Notify(new EventBrokerTests());
+            await eventBroker.Command(new CommandBrokerTests());
 
             wasCalled.Should().BeTrue();
         }
 
         [Fact]
-        public async Task NotifyShouldNotNotifySubscribersIfEventInterrupterBlocks()
+        public async Task CommandShouldNotNotifySubscribersIfEventInterrupterBlocks()
         {
-            Func<EventBrokerTests, Task<bool>> func = u => Task.FromResult(false);
+            Func<CommandBrokerTests, Task<bool>> func = u => Task.FromResult(false);
             using var eventBroker = new EventBroker(func);
 
             var wasCalled = false;
-            eventBroker.Subscribe<EventBrokerTests>(o =>
+            eventBroker.Subscribe<CommandBrokerTests>(o =>
             {
                 wasCalled = true;
                 return Task.CompletedTask;
             });
 
-            await eventBroker.Notify(new EventBrokerTests());
+            await eventBroker.Command(new CommandBrokerTests());
             wasCalled.Should().BeFalse();
         }
 
         [Fact]
-        public async Task NotifyShouldNotifySubscribersIfEventInterrupterDoesNotBlock()
+        public async Task CommandShouldNotifySubscribersIfEventInterrupterDoesNotBlock()
         {
-            Func<EventBrokerTests, Task<bool>> func = u => Task.FromResult(true);
+            Func<CommandBrokerTests, Task<bool>> func = u => Task.FromResult(true);
             using var eventBroker = new EventBroker(func);
 
             var wasCalled = false;
-            eventBroker.Subscribe<EventBrokerTests>(o =>
+            eventBroker.Subscribe<CommandBrokerTests>(o =>
             {
                 wasCalled = true;
                 return Task.CompletedTask;
             });
 
-            await eventBroker.Notify(new EventBrokerTests());
+            await eventBroker.Command(new CommandBrokerTests());
             wasCalled.Should().BeTrue();
         }
 
         [Fact]
-        public async Task NotifyShouldNotNotifySubscribersIfGeneralInterrupterBlocks()
+        public async Task CommandShouldNotNotifySubscribersIfGeneralInterrupterBlocks()
         {
             Func<object, Task<bool>> func = u => Task.FromResult(false);
             using var eventBroker = new EventBroker(func);
 
             var wasCalled = false;
-            eventBroker.Subscribe<EventBrokerTests>(o =>
+            eventBroker.Subscribe<CommandBrokerTests>(o =>
             {
                 wasCalled = true;
                 return Task.CompletedTask;
             });
 
-            await eventBroker.Notify(new EventBrokerTests());
+            await eventBroker.Command(new CommandBrokerTests());
             wasCalled.Should().BeFalse();
         }
 
         [Fact]
-        public async Task NotifyShouldNotifySubscribersIfGeneralInterrupterDoesNotBlock()
+        public async Task CommandShouldNotifySubscribersIfGeneralInterrupterDoesNotBlock()
         {
             Func<object, Task<bool>> func = u => Task.FromResult(true);
             using var eventBroker = new EventBroker(func);
 
             var wasCalled = false;
-            eventBroker.Subscribe<EventBrokerTests>(o =>
+            eventBroker.Subscribe<CommandBrokerTests>(o =>
             {
                 wasCalled = true;
                 return Task.CompletedTask;
             });
 
-            await eventBroker.Notify(new EventBrokerTests());
+            await eventBroker.Command(new CommandBrokerTests());
             wasCalled.Should().BeTrue();
         }
     }

@@ -26,7 +26,7 @@ namespace N2tl.Observer
         {
             if (OnNewNotification == null)
             {
-                return Task.CompletedTask;
+                return null;
             }
 
             return OnNewNotification(message);

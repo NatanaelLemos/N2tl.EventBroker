@@ -8,10 +8,10 @@ namespace N2tl.Observer
     /// <summary>
     /// An internal implementation of <see cref="IEventBroker"/>.
     /// </summary>
-    internal class EventBroker : IEventBroker
+    internal partial class EventBroker : IEventBroker
     {
-        private readonly Dictionary<string, IDisposable> _subscriptions;
-        private readonly List<object> _interrupters;
+        private readonly Dictionary<string, IDisposable> _subscriptions = new Dictionary<string, IDisposable>();
+        private readonly List<object> _interrupters = new List<object>();
 
         /// <summary>
         /// Creates an instance of <see cref="EventBroker"/>.
@@ -21,66 +21,25 @@ namespace N2tl.Observer
         /// </param>
         internal EventBroker(params object[] interrupters)
         {
-            _subscriptions = new Dictionary<string, IDisposable>();
-            _interrupters = interrupters == null
-                ? new List<object>()
-                : interrupters.ToList();
+            if (interrupters != null)
+            {
+                _interrupters = interrupters.ToList();
+            }
         }
 
-        /// <inheritdoc />
-        public void Subscribe<TEvent>(Func<TEvent, Task> callback)
+        private EventBrokerNotification<TCommand> GetEventNotification<TCommand>()
         {
-            if (callback == null)
-            {
-                return;
-            }
-
-            var eventNotification = GetEventNotification<TEvent>();
-            eventNotification.Subscribe(callback);
-        }
-
-        /// <inheritdoc />
-        public void Unsubscribe<TEvent>(Func<TEvent, Task> callback)
-        {
-            if(callback == null)
-            {
-                return;
-            }
-
-            var eventNotification = GetEventNotification<TEvent>();
-            eventNotification.Unsubscribe(callback);
-        }
-
-        /// <inheritdoc />
-        public async Task Notify<TEvent>(TEvent command)
-        {
-            if (command == null)
-            {
-                return;
-            }
-
-            if (await CommandWasInterrupted(command))
-            {
-                return;
-            }
-
-            var eventNotification = GetEventNotification<TEvent>();
-            await eventNotification.Notify(command);
-        }
-
-        private EventBrokerNotification<TEvent> GetEventNotification<TEvent>()
-        {
-            var key = typeof(TEvent).FullName;
-            EventBrokerNotification<TEvent> eventNotification = null;
+            var key = typeof(TCommand).FullName;
+            EventBrokerNotification<TCommand> eventNotification = null;
 
             if (_subscriptions.ContainsKey(key))
             {
-                eventNotification = _subscriptions[key] as EventBrokerNotification<TEvent>;
+                eventNotification = _subscriptions[key] as EventBrokerNotification<TCommand>;
             }
 
             if (eventNotification == null)
             {
-                eventNotification = new EventBrokerNotification<TEvent>();
+                eventNotification = new EventBrokerNotification<TCommand>();
                 _subscriptions[key] = eventNotification;
             }
 
@@ -89,12 +48,12 @@ namespace N2tl.Observer
 
         private async Task<bool> CommandWasInterrupted<TEvent>(TEvent command)
         {
-            if(await CommandWasInterruptedByTypeSpecificInterrupter(command))
+            if (await CommandWasInterruptedByTypeSpecificInterrupter(command))
             {
                 return true;
             }
 
-            if(await CommandWasInterruptedByGeneralInterrupter(command))
+            if (await CommandWasInterruptedByGeneralInterrupter(command))
             {
                 return true;
             }
@@ -121,7 +80,7 @@ namespace N2tl.Observer
             return false;
         }
 
-        private async Task<bool>CommandWasInterruptedByGeneralInterrupter<TEvent>(TEvent command)
+        private async Task<bool> CommandWasInterruptedByGeneralInterrupter<TEvent>(TEvent command)
         {
             var generalInterrupters = _interrupters
                 .Where(i => i is Func<object, Task<bool>>)
