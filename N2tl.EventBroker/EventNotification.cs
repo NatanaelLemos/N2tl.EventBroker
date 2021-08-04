@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
-namespace N2tl.Observer
+namespace N2tl.EventBroker
 {
-    internal class EventBrokerNotification<T> : IDisposable
+    internal class EventNotification<TEvent> : IDisposable
     {
-        private event Func<T, Task> OnNewNotification;
+        private event Func<TEvent, Task> OnNewNotification;
 
-        public void Subscribe(Func<T, Task> callback)
+        public void Subscribe(Func<TEvent, Task> callback)
         {
             OnNewNotification += callback;
         }
 
-        public void Unsubscribe(Func<T, Task> callback)
+        public void Unsubscribe(Func<TEvent, Task> callback)
         {
             if (OnNewNotification == null)
             {
@@ -22,7 +22,7 @@ namespace N2tl.Observer
             OnNewNotification -= callback;
         }
 
-        public Task Notify(T message)
+        public Task Notify(TEvent message)
         {
             if (OnNewNotification == null)
             {
@@ -41,7 +41,7 @@ namespace N2tl.Observer
 
             foreach (var handler in OnNewNotification.GetInvocationList())
             {
-                OnNewNotification -= (Func<T, Task>)handler;
+                OnNewNotification -= (Func<TEvent, Task>)handler;
             }
 
             OnNewNotification = null;

@@ -1,9 +1,9 @@
-# N2tl.Observer
+# N2tl.EventBroker
 
 Implementation of the Observer pattern in the form of an EventBroker.
 
 You can find this project published at
-https://www.nuget.org/packages/N2tl.Observer/
+https://www.nuget.org/packages/N2tl.EventBroker/
 
 ## Usage
 
@@ -14,18 +14,18 @@ To inject it to your dependency container, follow:
 ``` C#
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddObserver();
+            services.AddEventBroker();
         }
 ```
 
 ### Without IServiceCollection
 
 ``` C#
-   IEventBroker eventBroker = ObserverBuilder.Build();
+   IEventBroker eventBroker = EventBrokerBuilder.Build();
 ```
 
 ---
-Optionally, the ObserverBuilder can be configured with interrupters.
+Optionally, the EventBroker can be configured with interrupters.
 
 Once interrupters are added to the pipeline, events will only go through if the condition in any interrupter returns true.
 
@@ -36,13 +36,13 @@ Once interrupters are added to the pipeline, events will only go through if the 
         {
             Func<MyEventType, Task<bool>> interrupter = t => Task.FromResult(true);
 
-            services.AddObserver(opt => opt.AddEventInterrupter(interrupter));
+            services.AddEventBroker(opt => opt.AddEventInterrupter(interrupter));
         }
 
         or
 
         Func<MyEventType, Task<bool>> interrupter = t => Task.FromResult(true);
-        ObserverBuilder.Build(opt => opt.AddEventInterrupter(interrupter));
+        EventBrokerBuilder.Build(opt => opt.AddEventInterrupter(interrupter));
 ```
 
 ### ObserverBuilder with general interrupters.
@@ -52,13 +52,13 @@ Once interrupters are added to the pipeline, events will only go through if the 
         {
             Func<object, Task<bool>> interrupter = t => Task.FromResult(true);
 
-            services.AddObserver(opt => opt.AddGeneralInterrupter(interrupter));
+            services.AddEventBroker(opt => opt.AddGeneralInterrupter(interrupter));
         }
 
         or
 
         Func<object, Task<bool>> interrupter = t => Task.FromResult(true);
-        ObserverBuilder.Build(opt => opt.AddGeneralInterrupter(interrupter));
+        EventBrokerBuilder.Build(opt => opt.AddGeneralInterrupter(interrupter));
 ```
 
 ---
