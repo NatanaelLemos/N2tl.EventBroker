@@ -18,7 +18,7 @@ namespace N2tl.EventBroker
             return Build(optionsInstance, options);
         }
 
-        internal static IEventBroker Build(
+        private static IEventBroker Build(
             EventBrokerOptions optionsInstance,
             Action<EventBrokerOptions> options)
         {

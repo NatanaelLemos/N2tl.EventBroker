@@ -26,7 +26,7 @@ namespace N2tl.EventBroker
         {
             if (OnNewNotification == null)
             {
-                return null;
+                return Task.CompletedTask;
             }
 
             return OnNewNotification(message);
